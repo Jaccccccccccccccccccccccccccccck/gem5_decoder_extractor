@@ -2,7 +2,7 @@ import os
 import shutil
 
 gem5_base_dir = '/home/workspace/gem5/'
-compiled_gem5_base_dir = '/home/workspace/gem5/build/ARM/'
+compiled_gem5_base_dir = '/home/workspace/gem5/build/RISCV/'
 decoder_project_base_dir = '/home/workspace/gem5_decoder_extract/'
 includes = []
 processed_includes = set()
@@ -91,15 +91,8 @@ def copy_ext_include():
 if __name__ == "__main__":
     copy_ext_include()
     analyse_includes([
-        'arch/arm/generated/generic_cpu_exec_1.cc', 
-        'arch/arm/generated/generic_cpu_exec_2.cc', 
-        'arch/arm/generated/generic_cpu_exec_3.cc', 
-        'arch/arm/generated/generic_cpu_exec_4.cc', 
-        'arch/arm/generated/generic_cpu_exec_5.cc', 
-        'arch/arm/generated/generic_cpu_exec_6.cc', 
-        'arch/arm/generated/inst-constrs-1.cc', 
-        'arch/arm/generated/inst-constrs-2.cc', 
-        'arch/arm/generated/inst-constrs-3.cc', 
+        'arch/riscv/generated/generic_cpu_exec.cc', 
+        'arch/riscv/generated/inst-constrs.cc', 
         'sim/init.cc', 
         'sim/tags.cc', 
         'sim/backtrace_glibc.cc', 
@@ -107,7 +100,6 @@ if __name__ == "__main__":
         'python/pybind11/debug.cc', 
         'python/pybind11/event.cc', 
         'python/pybind11/stats.cc', 
-        'arch/arm/insts/tme64classic.cc',
         'base/date.cc',
         'base/version.cc',
         ])

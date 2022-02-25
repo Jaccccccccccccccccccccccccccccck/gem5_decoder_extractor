@@ -22,6 +22,7 @@ include_directories(ext/googletest/googlemock)
 include_directories(ext/googletest/googletest)
 include_directories(ext/googletest/googlemock/include)
 include_directories(ext/googletest/googletest/include)
+include_directories(ext/softfloat)
 
 
 find_package(HDF5 REQUIRED COMPONENTS C CXX)
@@ -53,10 +54,14 @@ set(SRC_NOMALI)
 file(GLOB_RECURSE SRC_NOMALI ext/nomali/*.cc)
 add_library(nomali ${SRC_NOMALI})
 
+set(SRC_SOFTFLOAT)
+file(GLOB_RECURSE SRC_SOFTFLOAT ext/softfloat/*.c)
+add_library(softfloat ${SRC_SOFTFLOAT})
+
 set(SRC_DECODER)
 file(GLOB_RECURSE SRC_DECODER ./arch/*.cc ./base/*.cc ./config/*.cc ./cpu/*.cc ./dev/*.cc ./kern/*.cc ./mem/*.cc ./params/*.cc ./sim/*.cc ./enums/*.cc ./python/*.cc)
 add_library(decoder ${SRC_DECODER})
 
 add_executable( main main.cc )
 
-target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt ) # work for zlib
+target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt softfloat) # work for zlib
