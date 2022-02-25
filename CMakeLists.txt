@@ -58,6 +58,5 @@ file(GLOB_RECURSE SRC_DECODER ./arch/*.cc ./base/*.cc ./config/*.cc ./cpu/*.cc .
 add_library(decoder ${SRC_DECODER})
 
 add_executable( main main.cc )
-# add_executable( main main.cc )
-# link_directories("/usr/lib") # for zlib, doesn't work
+
 target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt ) # work for zlib
