@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "arch/arm/decoder.hh"
+#include "arch/mips/decoder.hh"
 
 using namespace std;
 
@@ -11,6 +11,6 @@ int main(int argc,char *argv[]) {
     }
     int64_t inst = strtoul(argv[1], nullptr, 16);
     inst |= 1L << 34; // set bit 34 of inst = 1, bit 34 of inst is a extra flag for aarch64 of ExtMachInst; 
-    gem5::StaticInst *a = gem5::ArmISA::Decoder::decodeInst(inst).get();
+    gem5::StaticInst *a = gem5::MipsISA::Decoder::decodeInst(inst).get();
     cout << a->getName() << endl;
 }
