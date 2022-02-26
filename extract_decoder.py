@@ -2,7 +2,7 @@ import os
 import shutil
 
 gem5_base_dir = '/home/workspace/gem5/'
-compiled_gem5_base_dir = '/home/workspace/gem5/build/RISCV/'
+compiled_gem5_base_dir = '/home/workspace/gem5/build/X86/'
 decoder_project_base_dir = '/home/workspace/gem5_decoder_extract/'
 includes = []
 processed_includes = set()
@@ -91,8 +91,8 @@ def copy_ext_include():
 if __name__ == "__main__":
     copy_ext_include()
     analyse_includes([
-        'arch/riscv/generated/generic_cpu_exec.cc', 
-        'arch/riscv/generated/inst-constrs.cc', 
+        'arch/x86/generated/generic_cpu_exec.cc', 
+        'arch/x86/generated/inst-constrs.cc', 
         'sim/init.cc', 
         'sim/tags.cc', 
         'sim/backtrace_glibc.cc', 
@@ -103,3 +103,4 @@ if __name__ == "__main__":
         'base/date.cc',
         'base/version.cc',
         ])
+    
