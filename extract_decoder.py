@@ -93,6 +93,7 @@ if __name__ == "__main__":
     analyse_includes([
         'arch/x86/generated/generic_cpu_exec.cc', 
         'arch/x86/generated/inst-constrs.cc', 
+        'arch/x86/decoder_tables.cc', 
         'sim/init.cc', 
         'sim/tags.cc', 
         'sim/backtrace_glibc.cc', 
