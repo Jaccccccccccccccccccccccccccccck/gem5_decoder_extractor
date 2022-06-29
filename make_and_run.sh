@@ -4,4 +4,5 @@ cmake ..
 clear
 make -j
 echo "start run."
-./main d65f03c0
+# ./main 17fffe0a  go error
+./main 885f7c40
