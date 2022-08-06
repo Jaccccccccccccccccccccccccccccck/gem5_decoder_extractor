@@ -39,7 +39,9 @@ add_compile_options("-I/usr/include/libpng16")
 add_compile_options("-llibpng16")
 add_compile_options("-I/usr/include/python3.6")
 add_compile_options("-lpython3.6")
+add_compile_options("-lbsd")
 
+set(DIR_TO_BSD_LIB_FILE /usr/lib/x86_64-linux-gnu/libbsd.so)
 
 
 
@@ -68,4 +70,4 @@ add_library(decoder ${SRC_DECODER})
 
 add_executable( main main.cc )
 
-target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt softfloat fputils) # work for zlib
+target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt softfloat fputils ${DIR_TO_BSD_LIB_FILE}) # work for zlib
