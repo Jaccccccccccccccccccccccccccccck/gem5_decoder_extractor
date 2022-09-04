@@ -141,6 +141,33 @@ class Decoder : public InstDecoder
         consumeBytes(toGet);
     }
 
+    static   void
+    getImmediateStatic(unsigned char* bytes, int byte_size, int &collected, uint64_t &current, int size, uint64_t &index)
+    {
+        // Figure out how many bytes we still need to get for the
+        // immediate.
+        int toGet = size - collected;
+        // Figure out how many bytes are left in our "buffer".
+        int remaining = byte_size - index;
+        // Get as much as we need, up to the amount available.
+        // toGet = toGet > remaining ? remaining : toGet;
+
+        // Shift the bytes we want to be all the way to the right
+        // uint64_t partialImm = bytes >> (index * 8);
+        uint64_t partialImm = 0;
+        memcpy(&partialImm + 8 - remaining, &bytes + index, remaining);
+        // Mask off what we don't want.
+        partialImm &= mask(toGet * 8);
+        // Shift it over to overlay with our displacement.
+        partialImm <<= (collected * 8);
+        // Put it into our displacement.
+        current |= partialImm;
+        // Update how many bytes we've collected.
+        collected += toGet;
+        index += toGet;
+
+    }
+
     void
     updateOffsetState()
     {
@@ -223,8 +250,27 @@ class Decoder : public InstDecoder
     State doDisplacementState();
     State doImmediateState();
 
+    static State doResetStateStatic(ExtMachInst&);
+    static State doPrefixStateStatic(uint8_t, ExtMachInst&, u_int64_t&);
+    static State doVex2Of2StateStatic(uint8_t, ExtMachInst&, u_int64_t&);
+    static State doVex2Of3StateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doVex3Of3StateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doVexOpcodeStateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doOneByteOpcodeStateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doTwoByteOpcodeStateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doThreeByte0F38OpcodeStateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doThreeByte0F3AOpcodeStateStatic(uint8_t, ExtMachInst&, u_int64_t&, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone);
+    static State doModRMStateStatic(uint8_t, ExtMachInst&, u_int64_t&, int&, int&, uint8_t&, bool&);
+    static State doSIBStateStatic(uint8_t, ExtMachInst&, u_int64_t&, int&, int&, bool&);
+    static State doDisplacementStateStatic(unsigned char*, int byte_size, ExtMachInst&, u_int64_t&, int&, int&, int&, bool&);
+    static State doImmediateStateStatic(unsigned char* bytes, int byte_size, ExtMachInst emi, uint64_t &index, int &immediateSize, int &immediateCollected, bool &instDone);
+
     // Process the actual opcode found earlier, using the supplied tables.
     State processOpcode(ByteTable &immTable, ByteTable &modrmTable,
+                        bool addrSizedImm = false);
+    static State processOpcodeStatic(ByteTable &immTable, ByteTable &modrmTable,
+                        ExtMachInst& emi,
+                        uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone,
                         bool addrSizedImm = false);
     // Process the opcode found with VEX / XOP prefix.
     State processExtendedOpcode(ByteTable &immTable);
@@ -244,7 +290,6 @@ class Decoder : public InstDecoder
             CacheKey, decode_cache::InstMap<ExtMachInst> *> InstCacheMap;
     static InstCacheMap instCacheMap;
 
-    StaticInstPtr decodeInst(ExtMachInst mach_inst);
 
     /// Decode a machine instruction.
     /// @param mach_inst The binary instruction to decode.
@@ -254,6 +299,8 @@ class Decoder : public InstDecoder
     void process();
 
   public:
+    static ExtMachInst getExtInst(unsigned char bytes[], int byte_size);
+    static StaticInstPtr decodeInst(ExtMachInst mach_inst);
     Decoder(const X86DecoderParams &p) : InstDecoder(p, &fetchChunk)
     {
         emi.reset();
