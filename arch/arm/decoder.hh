@@ -52,6 +52,7 @@
 #include "debug/Decode.hh"
 #include "enums/DecoderFlavor.hh"
 #include "params/ArmDecoder.hh"
+#include "arch/arm/insts/static_inst.hh"
 
 namespace gem5
 {
@@ -134,6 +135,8 @@ class Decoder : public InstDecoder
     Decoder(const ArmDecoderParams &params);
 
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
+
+    static void decode_elf_arm(const char *file_path,  std::vector<StaticInst *> &res);
 
     /** Reset the decoders internal state. */
     void reset() override;
