@@ -158,6 +158,21 @@ class Decoder : public InstDecoder
     {
         sveLen = len;
     }
+
+    static ExtMachInst predecode(u_int32_t inst)
+    {
+      return (inst | 1L << 34); // set bit 34 of inst = 1, bit 34 of inst is a extra flag for aarch64 of ExtMachInst;
+    }
+
+    static StaticInstPtr postdecode(ExtMachInst mach_inst)
+    {
+      return decodeInst(mach_inst);
+    }
+
+    static StaticInstPtr decode_inst(u_int32_t inst)
+    {
+      return decodeInst(predecode(inst));
+    }
 };
 
 } // namespace ArmISA
