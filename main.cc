@@ -26,4 +26,14 @@ int main(int argc, char* argv[]) {
     int64_t inst = strtoul(argv[1], nullptr, 16);
     gem5::StaticInst* a = gem5::ArmISA::Decoder::decode_inst(inst).get();
     cout << a->getName() << endl;
+    printf("inst addr:%p\n", a);
+    printf("size of arm static inst: %d\n", sizeof(gem5::ArmISA::ArmStaticInst));
+    char inst_bytes[128];
+    // use asBytes copy a inst, error
+    // a->asBytes(inst_bytes, 128);
+    memcpy(inst_bytes, a, sizeof(gem5::ArmISA::ArmStaticInst));
+    gem5::ArmISA::ArmStaticInst *copied_inst = (gem5::ArmISA::ArmStaticInst *)inst_bytes;
+    printf("copied inst addr:%p\n", copied_inst);
+    cout << "copied inst op class: " << copied_inst->getName() << endl;
+
 }
