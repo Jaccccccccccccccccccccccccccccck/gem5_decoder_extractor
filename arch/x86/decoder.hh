@@ -302,6 +302,19 @@ class Decoder : public InstDecoder
   public:
     static ExtMachInst getExtInst(unsigned char bytes[], int byte_size);
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
+    static void decode_elf_x86(const char *file_path,  std::vector<StaticInst *> &res);
+    static ExtMachInst predecode(unsigned char bytes[], int byte_size)
+    {
+        return getExtInst(bytes, byte_size);
+    }
+    static StaticInstPtr postdecode(ExtMachInst mach_inst)
+    {
+        return decodeInst(mach_inst);
+    }
+    static StaticInstPtr decode_inst(unsigned char bytes[], int byte_size)
+    {
+        return decodeInst(predecode(bytes, byte_size));
+    }
     Decoder(const X86DecoderParams &p) : InstDecoder(p, &fetchChunk)
     {
         emi.reset();
