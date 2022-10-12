@@ -151,11 +151,12 @@ class Decoder : public InstDecoder
         int remaining = byte_size - index;
         // Get as much as we need, up to the amount available.
         // toGet = toGet > remaining ? remaining : toGet;
+        assert(remaining >= toGet); // 剩余的bytes需要够decode immediate使用
 
         // Shift the bytes we want to be all the way to the right
-        // uint64_t partialImm = bytes >> (index * 8);
+        // uint64_t partialImm = bytes >> (index * 8); // 小端右移把解析过的offset的指令去掉？
         uint64_t partialImm = 0;
-        memcpy(&partialImm + 8 - remaining, &bytes + index, remaining);
+        memcpy(&partialImm, bytes + index, toGet);
         // Mask off what we don't want.
         partialImm &= mask(toGet * 8);
         // Shift it over to overlay with our displacement.
