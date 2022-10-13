@@ -46,6 +46,8 @@
 #include "debug/Decoder.hh"
 #include "params/X86Decoder.hh"
 
+#include "arch/x86/insts/static_inst.hh"
+
 namespace gem5
 {
 
@@ -300,12 +302,17 @@ class Decoder : public InstDecoder
     void process();
 
   public:
-    static ExtMachInst getExtInst(unsigned char bytes[], int byte_size);
+    static ExtMachInst getExtInst(unsigned char bytes[], int byte_size, int &consumed_bytes);
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
-    static void decode_elf_x86(const char *file_path,  std::vector<StaticInst *> &res);
+    static void decode_elf_x86(const char *file_path,  std::vector<gem5::StaticInst *> &res);
     static ExtMachInst predecode(unsigned char bytes[], int byte_size)
     {
-        return getExtInst(bytes, byte_size);
+        int consumed_bytes = 0;
+        return getExtInst(bytes, byte_size, consumed_bytes);
+    }
+    static ExtMachInst predecode(unsigned char bytes[], int byte_size, int &consumed_bytes)
+    {
+        return getExtInst(bytes, byte_size, consumed_bytes);
     }
     static StaticInstPtr postdecode(ExtMachInst mach_inst)
     {

@@ -94,7 +94,7 @@ Decoder::doResetStateStatic(ExtMachInst &emi)
 }
 
 ExtMachInst
-Decoder::getExtInst(unsigned char bytes[], int byte_size)
+Decoder::getExtInst(unsigned char bytes[], int byte_size, int &consumed_bytes)
 {
   // The size of the displacement value.
   int displacementSize;
@@ -176,6 +176,7 @@ Decoder::getExtInst(unsigned char bytes[], int byte_size)
           panic("Unrecognized state! %d\n", state);
       }
   }
+  consumed_bytes = index;
   return emi;
 }
 
@@ -365,11 +366,11 @@ Decoder::doPrefixStateStatic(uint8_t nextByte, ExtMachInst &emi, u_int64_t &inde
         // Operand size override prefixes
       case OperandSizeOverride:
         // printf("Found operand size override prefix.\n");
-        printf("Found operand size override prefix.\n");
+        // printf("Found operand size override prefix.\n");
         emi.legacy.op = true;
         break;
       case AddressSizeOverride:
-        printf("Found address size override prefix.\n");
+        // printf("Found address size override prefix.\n");
         emi.legacy.addr = true;
         break;
         // Segment override prefixes
@@ -379,32 +380,32 @@ Decoder::doPrefixStateStatic(uint8_t nextByte, ExtMachInst &emi, u_int64_t &inde
       case FSOverride:
       case GSOverride:
       case SSOverride:
-        printf("Found segment override.\n");
+        // printf("Found segment override.\n");
         emi.legacy.seg = prefix;
         break;
       case Lock:
-        printf("Found lock prefix.\n");
+        // printf("Found lock prefix.\n");
         emi.legacy.lock = true;
         break;
       case Rep:
-        printf("Found rep prefix.\n");
+        // printf("Found rep prefix.\n");
         emi.legacy.rep = true;
         break;
       case Repne:
-        printf("Found repne prefix.\n");
+        // printf("Found repne prefix.\n");
         emi.legacy.repne = true;
         break;
       case RexPrefix:
-        printf("Found Rex prefix %#x.\n", nextByte);
+        // printf("Found Rex prefix %#x.\n", nextByte);
         emi.rex = nextByte;
         break;
       case Vex2Prefix:
-        printf("Found VEX two-byte prefix %#x.\n", nextByte);
+        // printf("Found VEX two-byte prefix %#x.\n", nextByte);
         emi.vex.present = 1;
         nextState = Vex2Of2State;
         break;
       case Vex3Prefix:
-        printf("Found VEX three-byte prefix %#x.\n", nextByte);
+        // printf("Found VEX three-byte prefix %#x.\n", nextByte);
         emi.vex.present = 1;
         nextState = Vex2Of3State;
         break;
@@ -659,7 +660,7 @@ Decoder::doVexOpcodeState(uint8_t nextByte)
 Decoder::State
 Decoder::doVexOpcodeStateStatic(uint8_t nextByte, ExtMachInst &emi, uint64_t &index, uint8_t &altOp, uint8_t &defOp, uint8_t &altAddr, uint8_t &defAddr, uint8_t &stack, int &immediateSize, bool &instDone)
 {
-    printf("Found VEX opcode %#x.\n", nextByte);
+    // printf("Found VEX opcode %#x.\n", nextByte);
 
     emi.opcode.op = nextByte;
     index++;
@@ -687,10 +688,10 @@ Decoder::doOneByteOpcodeState(uint8_t nextByte)
     consumeByte();
 
     if (nextByte == 0x0f) {
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
         nextState = TwoByteOpcodeState;
     } else {
-        printf("Found one byte opcode %#x.\n", nextByte);
+        // printf("Found one byte opcode %#x.\n", nextByte);
         emi.opcode.type = OneByteOpcode;
         emi.opcode.op = nextByte;
 
@@ -707,10 +708,10 @@ Decoder::doOneByteOpcodeStateStatic(uint8_t nextByte, ExtMachInst &emi, uint64_t
     index++;
 
     if (nextByte == 0x0f) {
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
         nextState = TwoByteOpcodeState;
     } else {
-        printf("Found one byte opcode %#x.\n", nextByte);
+        // printf("Found one byte opcode %#x.\n", nextByte);
         emi.opcode.type = OneByteOpcode;
         emi.opcode.op = nextByte;
 
@@ -729,12 +730,12 @@ Decoder::doTwoByteOpcodeState(uint8_t nextByte)
     consumeByte();
     if (nextByte == 0x38) {
         nextState = ThreeByte0F38OpcodeState;
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
     } else if (nextByte == 0x3a) {
         nextState = ThreeByte0F3AOpcodeState;
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
     } else {
-        printf("Found two byte opcode %#x.\n", nextByte);
+        // printf("Found two byte opcode %#x.\n", nextByte);
         emi.opcode.type = TwoByteOpcode;
         emi.opcode.op = nextByte;
 
@@ -750,12 +751,12 @@ Decoder::doTwoByteOpcodeStateStatic(uint8_t nextByte, ExtMachInst &emi, uint64_t
     index++;
     if (nextByte == 0x38) {
         nextState = ThreeByte0F38OpcodeState;
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
     } else if (nextByte == 0x3a) {
         nextState = ThreeByte0F3AOpcodeState;
-        printf("Found opcode escape byte %#x.\n", nextByte);
+        // printf("Found opcode escape byte %#x.\n", nextByte);
     } else {
-        printf("Found two byte opcode %#x.\n", nextByte);
+        // printf("Found two byte opcode %#x.\n", nextByte);
         emi.opcode.type = TwoByteOpcode;
         emi.opcode.op = nextByte;
 
@@ -771,7 +772,7 @@ Decoder::doThreeByte0F38OpcodeState(uint8_t nextByte)
 {
     consumeByte();
 
-    printf("Found three byte 0F38 opcode %#x.\n", nextByte);
+    // printf("Found three byte 0F38 opcode %#x.\n", nextByte);
     emi.opcode.type = ThreeByte0F38Opcode;
     emi.opcode.op = nextByte;
 
@@ -783,7 +784,7 @@ Decoder::doThreeByte0F38OpcodeStateStatic(uint8_t nextByte, ExtMachInst &emi, ui
 {
     index++;
 
-    printf("Found three byte 0F38 opcode %#x.\n", nextByte);
+    // printf("Found three byte 0F38 opcode %#x.\n", nextByte);
     emi.opcode.type = ThreeByte0F38Opcode;
     emi.opcode.op = nextByte;
 
@@ -797,7 +798,7 @@ Decoder::doThreeByte0F3AOpcodeState(uint8_t nextByte)
 {
     consumeByte();
 
-    printf("Found three byte 0F3A opcode %#x.\n", nextByte);
+    // printf("Found three byte 0F3A opcode %#x.\n", nextByte);
     emi.opcode.type = ThreeByte0F3AOpcode;
     emi.opcode.op = nextByte;
 
@@ -809,7 +810,7 @@ Decoder::doThreeByte0F3AOpcodeStateStatic(uint8_t nextByte, ExtMachInst &emi, ui
 {
     index++;
 
-    printf("Found three byte 0F3A opcode %#x.\n", nextByte);
+    // printf("Found three byte 0F3A opcode %#x.\n", nextByte);
     emi.opcode.type = ThreeByte0F3AOpcode;
     emi.opcode.op = nextByte;
 
@@ -942,7 +943,7 @@ Decoder::doModRMState(uint8_t nextByte)
 {
     State nextState = ErrorState;
     ModRM modRM = nextByte;
-    printf("Found modrm byte %#x.\n", nextByte);
+    // printf("Found modrm byte %#x.\n", nextByte);
     if (defOp == 1) {
         // Figure out 16 bit displacement size.
         if ((modRM.mod == 0 && modRM.rm == 6) || modRM.mod == 2)
@@ -994,7 +995,7 @@ Decoder::doModRMStateStatic(uint8_t nextByte, ExtMachInst &emi, uint64_t &index,
 {
     State nextState = ErrorState;
     ModRM modRM = nextByte;
-    printf("Found modrm byte %#x.\n", nextByte);
+    // printf("Found modrm byte %#x.\n", nextByte);
     if (defOp == 1) {
         // Figure out 16 bit displacement size.
         if ((modRM.mod == 0 && modRM.rm == 6) || modRM.mod == 2)
@@ -1049,7 +1050,7 @@ Decoder::doSIBState(uint8_t nextByte)
 {
     State nextState = ErrorState;
     emi.sib = nextByte;
-    printf("Found SIB byte %#x.\n", nextByte);
+    // printf("Found SIB byte %#x.\n", nextByte);
     consumeByte();
     if (emi.modRM.mod == 0 && emi.sib.base == 5)
         displacementSize = 4;
@@ -1069,7 +1070,7 @@ Decoder::doSIBStateStatic(uint8_t nextByte, ExtMachInst &emi, uint64_t &index, i
 {
     State nextState = ErrorState;
     emi.sib = nextByte;
-    printf("Found SIB byte %#x.\n", nextByte);
+    // printf("Found SIB byte %#x.\n", nextByte);
     index++;
     if (emi.modRM.mod == 0 && emi.sib.base == 5)
         displacementSize = 4;
@@ -1094,8 +1095,8 @@ Decoder::doDisplacementState()
             emi.displacement,
             displacementSize);
 
-    printf("Collecting %d byte displacement, got %d bytes.\n",
-            displacementSize, immediateCollected);
+    // printf("Collecting %d byte displacement, got %d bytes.\n",
+            // displacementSize, immediateCollected);
 
     if (displacementSize == immediateCollected) {
         // Reset this for other immediates.
@@ -1115,8 +1116,8 @@ Decoder::doDisplacementState()
           default:
             panic("Undefined displacement size!\n");
         }
-        printf("Collected displacement %#x.\n",
-                emi.displacement);
+        // printf("Collected displacement %#x.\n",
+        //         emi.displacement);
         if (immediateSize) {
             nextState = ImmediateState;
         } else {
@@ -1138,8 +1139,8 @@ Decoder::doDisplacementStateStatic(unsigned char* bytes, int byte_size, ExtMachI
 
     getImmediateStatic(bytes, byte_size, immediateCollected, emi.displacement, displacementSize, index);
 
-    printf("Collecting %d byte displacement, got %d bytes.\n",
-            displacementSize, immediateCollected);
+    // printf("Collecting %d byte displacement, got %d bytes.\n",
+    //         displacementSize, immediateCollected);
 
     if (displacementSize == immediateCollected) {
         // Reset this for other immediates.
@@ -1159,8 +1160,8 @@ Decoder::doDisplacementStateStatic(unsigned char* bytes, int byte_size, ExtMachI
           default:
             panic("Undefined displacement size!\n");
         }
-        printf("Collected displacement %#x.\n",
-                emi.displacement);
+        // printf("Collected displacement %#x.\n",
+        //         emi.displacement);
         if (immediateSize) {
             nextState = ImmediateState;
         } else {
@@ -1183,8 +1184,8 @@ Decoder::doImmediateState()
 
     getImmediate(immediateCollected, emi.immediate, immediateSize);
 
-    printf("Collecting %d byte immediate, got %d bytes.\n",
-            immediateSize, immediateCollected);
+    // printf("Collecting %d byte immediate, got %d bytes.\n",
+    //         immediateSize, immediateCollected);
 
     if (immediateSize == immediateCollected) {
         // Reset this for other immediates.
@@ -1206,8 +1207,8 @@ Decoder::doImmediateState()
             emi.immediate = sext<8>(emi.immediate);
         }
 
-        printf("Collected immediate %#x.\n",
-                emi.immediate);
+        // printf("Collected immediate %#x.\n",
+        //         emi.immediate);
         instDone = true;
         nextState = ResetState;
     } else {
@@ -1222,8 +1223,8 @@ Decoder::doImmediateStateStatic(unsigned char* bytes, int byte_size, ExtMachInst
     State nextState = ErrorState;
 
     getImmediateStatic(bytes, byte_size, immediateCollected, emi.immediate, immediateSize, index);
-    printf("Collecting %d byte immediate, got %d bytes.\n",
-            immediateSize, immediateCollected);
+    // printf("Collecting %d byte immediate, got %d bytes.\n",
+    //         immediateSize, immediateCollected);
 
     if (immediateSize == immediateCollected) {
         // Reset this for other immediates.
@@ -1245,8 +1246,8 @@ Decoder::doImmediateStateStatic(unsigned char* bytes, int byte_size, ExtMachInst
             emi.immediate = sext<8>(emi.immediate);
         }
 
-        printf("Collected immediate %#x.\n",
-                emi.immediate);
+        // printf("Collected immediate %#x.\n",
+        //         emi.immediate);
         instDone = true;
         nextState = ResetState;
     } else {
