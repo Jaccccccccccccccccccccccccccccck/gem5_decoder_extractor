@@ -103,22 +103,19 @@ get_all_text_insts_fix32(const char *file_path) {
     return res;
 }
 
-void Decoder::decode_elf_x86(const char* file_path, std::vector<gem5::StaticInst *>& res) {
+void Decoder::decode_elf_x86(const char* file_path, std::vector<gem5::StaticInstPtr>& res) {
     std::vector<char> inst_bytes = get_all_text_insts_fix32(file_path);
     unsigned char* bytes = reinterpret_cast<unsigned char*>(inst_bytes.data());
     int offset = 0;
     unsigned long int consumed_bytes = 0;
     int count = 0;
-    while (consumed_bytes < inst_bytes.size() && count < 10) {
-        gem5::StaticInst* tmp = Decoder::decodeInst(Decoder::predecode(bytes, inst_bytes.size() - consumed_bytes, offset)).get();
-        std::cout << std::hex << tmp << std::endl;
+    while (consumed_bytes < inst_bytes.size()) {
+        gem5::StaticInstPtr tmp = Decoder::decodeInst(Decoder::predecode(bytes, inst_bytes.size() - consumed_bytes, offset));
         res.push_back(tmp);
-        std::cout << std::hex << res.back() << " : " << res.back()->getName() << std::endl;
+        // std::cout << std::hex << &(res.back()) << " : " << res.back()->getName() << std::endl;
         bytes += offset;
         consumed_bytes += offset;
-        count++;
     }
-    printf("inst count:%d\n", count);
 }
 } // namespace ArmISA
 } // namespace gem5

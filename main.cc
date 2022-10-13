@@ -5,13 +5,13 @@
 using namespace std;
 
 void test_decode_elf_arm(const char* file_path) {
-    std::vector<gem5::StaticInst *> insts;
+    std::vector<gem5::StaticInstPtr> insts;
     gem5::X86ISA::Decoder::decode_elf_x86(file_path, insts);
     cout << "elf .text insts count: " << insts.size() << endl;
     cout << "first 10 insts opcode ..." << endl;
     std::cout << std::hex << &insts << std::endl;
     for (int i = 0; i < 10 && i < insts.size(); i++) {
-        cout << hex << insts[i] << " : "<< insts[i]->getName() << endl;
+        cout << hex << &insts[i] << " : "<< insts[i]->getName() << endl;
     }
 }
 

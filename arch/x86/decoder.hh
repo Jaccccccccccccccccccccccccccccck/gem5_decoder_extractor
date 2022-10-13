@@ -304,7 +304,7 @@ class Decoder : public InstDecoder
   public:
     static ExtMachInst getExtInst(unsigned char bytes[], int byte_size, int &consumed_bytes);
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
-    static void decode_elf_x86(const char *file_path,  std::vector<gem5::StaticInst *> &res);
+    static void decode_elf_x86(const char *file_path,  std::vector<gem5::StaticInstPtr> &res);
     static ExtMachInst predecode(unsigned char bytes[], int byte_size)
     {
         int consumed_bytes = 0;
