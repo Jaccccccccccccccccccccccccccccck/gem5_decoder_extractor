@@ -42,19 +42,13 @@ void get_inst_size() {
     printf("  size of arm AddXImm inst: %d\n", sizeof(gem5::ArmISAInst::AddXImm));
 }
 
-int main(int argc, char* argv[]) {
-    // test_decode_elf_arm("../test/hello.arm64");
-    get_inst_size();
-    if (argc != 2) {
-        cout << "need a hex inst arg! eg. d50342df" << endl;
-        exit(1);
-    }
-    int64_t inst = strtoul(argv[1], nullptr, 16);
+void test_copy_inst() {
+    int64_t inst = strtoul("d50342df", nullptr, 16);
     gem5::StaticInstPtr a = gem5::ArmISA::Decoder::decode_inst(inst);
     cout << "size of *staticInstPtr :" << sizeof(*a) << endl;
     cout << "size of *staticInstPtr :" << sizeof(*a.get()) << endl;
     printf("inst addr:%p\n", a);
-    cout << "opcode of " << hex << argv[1] << ": " << a->getName() << endl;
+    cout << "opcode : " << a->getName() << endl;
 
     char inst_bytes[128];
     // use asBytes copy a inst, error
@@ -63,4 +57,18 @@ int main(int argc, char* argv[]) {
     gem5::ArmISA::ArmStaticInst* copied_inst = (gem5::ArmISA::ArmStaticInst*)inst_bytes;
     printf("copied inst addr:%p\n", copied_inst);
     cout << "copied inst op class: " << copied_inst->getName() << endl;
+}
+
+int main(int argc, char* argv[]) {
+    // test_decode_elf_arm("../test/hello.arm64");
+    // get_inst_size();
+    // test_copy_inst();
+    if (argc != 2) {
+        cout << "need a hex inst arg! eg. d50342df" << endl;
+        exit(1);
+    }
+    int64_t inst = strtoul(argv[1], nullptr, 16);
+    gem5::StaticInstPtr a = gem5::ArmISA::Decoder::decode_inst(inst);
+    cout << "opcode of " << hex << argv[1] << ": " << a->getName() << endl;
+
 }
