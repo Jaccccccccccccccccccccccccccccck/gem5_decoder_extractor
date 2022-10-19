@@ -94,12 +94,12 @@ get_all_text_insts_fix32(const char *file_path) {
 }
 
 void
-Decoder::decode_elf_arm(const char *file_path, std::vector<StaticInst *> &res)
+Decoder::decode_elf_arm(const char *file_path, std::vector<StaticInstPtr> &res)
 {
     std::vector<u_int32_t> insts = get_all_text_insts_fix32(file_path);
     res.resize(insts.size());
     for(int i = 0; i < insts.size(); i++) {
-        res[i] = gem5::ArmISA::Decoder::decodeInst(insts[i]).get();
+        res[i] = gem5::ArmISA::Decoder::decode_inst(insts[i]);
         // if (i < 10) {
         //     std::cout << std::hex << res[i] << " : "<< res[i]->getName() << std::endl;
         //     if(i > 0) {

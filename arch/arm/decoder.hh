@@ -136,7 +136,7 @@ class Decoder : public InstDecoder
 
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
 
-    static void decode_elf_arm(const char *file_path,  std::vector<StaticInst *> &res);
+    static void decode_elf_arm(const char *file_path,  std::vector<StaticInstPtr> &res);
 
     /** Reset the decoders internal state. */
     void reset() override;
