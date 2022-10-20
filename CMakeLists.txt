@@ -42,6 +42,8 @@ add_compile_options("-lpython3.6")
 add_compile_options("-lbsd")
 
 set(DIR_TO_BSD_LIB_FILE /usr/lib/x86_64-linux-gnu/libbsd.so)
+add_library(libshm SHARED IMPORTED)
+set_property(TARGET libshm PROPERTY IMPORTED_LOCATION "/usr/lib/libshm_alloc.so")
 
 
 
@@ -71,4 +73,4 @@ add_library(decoder ${SRC_DECODER})
 
 add_executable( main main.cc )
 
-target_link_libraries(main PUBLIC decoder ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt fputils ${DIR_TO_BSD_LIB_FILE}) # work for zlib
+target_link_libraries(main decoder libshm ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${PNG_LIBRARY} pthread libfdt iostream3 nomali elf pybind11::module pybind11::embed rt fputils ${DIR_TO_BSD_LIB_FILE}) # work for zlib

@@ -55,6 +55,7 @@
 #include "cpu/static_inst_fwd.hh"
 #include "enums/StaticInstFlags.hh"
 #include "sim/byteswap.hh"
+#include "shm/shm.h"
 
 namespace gem5
 {
@@ -395,6 +396,18 @@ class StaticInst : public RefCounted, public StaticInstFlags
      * buffer if there wasn't enough space.
      */
     virtual size_t asBytes(void *buf, size_t max_size) { return 0; }
+
+    void* operator new(std::size_t size) {
+        std::cout << "operator new" << std::endl;
+        return SHM_OFFT_TO_ADDR(shm_malloc(size));
+        // return std::malloc(size);
+    }
+
+    void operator delete(void* ptr) {
+        std::cout << "operator delete" << std::endl;
+        printf("inst shared memory offset: %ld\n", SHM_ADDR_TO_OFFT(ptr));
+        shm_free(SHM_ADDR_TO_OFFT(ptr));
+    }
 };
 
 } // namespace gem5

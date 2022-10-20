@@ -4,6 +4,7 @@
 #include "arch/arm/generated/decoder.hh"
 #include "arch/arm/insts/static_inst.hh"
 #include "cpu/static_inst_fwd.hh"
+#include "shm/shm.h"
 
 using namespace std;
 
@@ -59,10 +60,27 @@ void test_copy_inst() {
     cout << "copied inst op class: " << copied_inst->getName() << endl;
 }
 
+void init_shared_mem() {
+    // init a shm for bb_inst_info
+    char chm_file_path_arg[64];
+    char rm_chm_file_comman[64];
+    strcpy(chm_file_path_arg, "/tmp/inst");
+    strcpy(rm_chm_file_comman, "rm /tmp/inst");
+    system(rm_chm_file_comman);
+    if (!get_shm_user_base()) {
+        if (shm_init(NULL, chm_file_path_arg)) {
+            printf("init shm done\n");
+        } else {
+            printf("init share mem error!\n");
+            exit(0);
+        }
+    }
+}
 int main(int argc, char* argv[]) {
     // test_decode_elf_arm("../test/hello.arm64");
     // get_inst_size();
     // test_copy_inst();
+    init_shared_mem();
     if (argc != 2) {
         cout << "need a hex inst arg! eg. d50342df" << endl;
         exit(1);
