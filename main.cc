@@ -19,6 +19,14 @@ void test_decode_elf_arm(const char* file_path) {
 }
 
 void get_inst_size() {
+    printf("  size of RefCounted class: %d\n", sizeof(gem5::RefCounted));
+    printf("  size of RegId class: %d\n", sizeof(gem5::RegId));
+    printf("  size of StaticInstFlags class: %d\n", sizeof(gem5::StaticInstFlags));
+    std::bitset<36> flags;
+    printf("  size of bitset<36>: %d\n", sizeof(flags));
+    std::unique_ptr<std::string> cachedDisassembly;
+    printf("  size of std::unique_ptr<std::string>: %d\n", sizeof(cachedDisassembly));
+    
     printf("get size of inst classes:\n");
     printf("  size of static inst: %d\n", sizeof(gem5::StaticInst));
     printf("  size of arm static inst: %d\n", sizeof(gem5::ArmISA::ArmStaticInst));
@@ -78,7 +86,7 @@ void init_shared_mem() {
 }
 int main(int argc, char* argv[]) {
     // test_decode_elf_arm("../test/hello.arm64");
-    // get_inst_size();
+    get_inst_size();
     // test_copy_inst();
     init_shared_mem();
     if (argc != 2) {
