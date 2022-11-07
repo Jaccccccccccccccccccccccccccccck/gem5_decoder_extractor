@@ -13,7 +13,7 @@ void test_decode_elf_arm(const char* file_path) {
     cout << "elf .text insts count: " << insts.size() << endl;
     cout << "first 10 insts opcode ..." << endl;
     for (int i = 0; i < 10 && i < insts.size(); i++) {
-        cout << i << " : " << hex << insts[i]->getEMI() << " " << insts[i]->getName() << endl;
+        cout << i << " : " << hex << insts[i]->getEMI() << " " << insts[i]->getName() << " is Macro: " << insts[i]->isMacroop() << " is Micro " << insts[i]->isMicroop() <<endl;
     }
 }
 
@@ -60,7 +60,7 @@ void test_copy_inst() {
 }
 
 int main(int argc, char* argv[]) {
-    // test_decode_elf_arm("../test/hello.arm64");
+    test_decode_elf_arm("../test/hello.arm64");
     // get_inst_size();
     // test_copy_inst();
     if (argc != 2) {

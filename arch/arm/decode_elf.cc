@@ -29,9 +29,8 @@ namespace ArmISA
 /*
 get 32-bits insts from elf .text
 */
-std::vector<u_int32_t> 
-get_all_text_insts_fix32(const char *file_path) {
-    std::vector<u_int32_t> res;
+void
+get_all_text_insts_fix32(const char *file_path, std::vector<u_int32_t>& res) {
     int fd;
     Elf* e;
     char *name, pc[4 * sizeof(char)];
@@ -90,13 +89,13 @@ get_all_text_insts_fix32(const char *file_path) {
     (void)putchar('\n');
     (void)elf_end(e);
     (void)close(fd);
-    return res;
 }
 
 void
 Decoder::decode_elf_arm(const char *file_path, std::vector<StaticInstPtr> &res)
 {
-    std::vector<u_int32_t> insts = get_all_text_insts_fix32(file_path);
+    std::vector<u_int32_t> insts;
+    get_all_text_insts_fix32(file_path, insts);
     res.resize(insts.size());
     for(int i = 0; i < insts.size(); i++) {
         res[i] = gem5::ArmISA::Decoder::decode_inst(insts[i]);
