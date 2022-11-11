@@ -12,8 +12,13 @@ void test_decode_elf_arm(const char* file_path) {
     gem5::ArmISA::Decoder::decode_elf_arm(file_path, insts);
     cout << "elf .text insts count: " << insts.size() << endl;
     cout << "first 10 insts opcode ..." << endl;
-    for (int i = 0; i < 10 && i < insts.size(); i++) {
-        cout << i << " : " << hex << insts[i]->getEMI() << " " << insts[i]->getName() << " is Macro: " << insts[i]->isMacroop() << " is Micro " << insts[i]->isMicroop() <<endl;
+    for (int i = 0; i < 10000 && i < insts.size(); i++) {
+        if(insts[i]->isMicroop()) {
+            cout << i << " : " << " " << insts[i]->getName() <<  " is Micro " << "!!!!!!!!!!!!!1" << endl;
+        }
+        if(insts[i]->isMacroop()) {
+            cout << i << " : " << " " << insts[i]->getName() << " is Macro: " << insts[i]->isMacroop() << endl;
+        }
     }
 }
 
