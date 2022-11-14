@@ -64,7 +64,13 @@ void test_copy_inst() {
     cout << "copied inst op class: " << copied_inst->getName() << endl;
 }
 
+void test_decode_mem() {
+    gem5::ArmISA::MemInfo* meminfo = gem5::ArmISA::Decoder::decode_mem(0xd50342df);
+    cout << "decode mem, is mem: " << meminfo->isMem << endl;
+}
+
 int main(int argc, char* argv[]) {
+    test_decode_mem();
     test_decode_elf_arm("../test/hello.arm64");
     // get_inst_size();
     // test_copy_inst();

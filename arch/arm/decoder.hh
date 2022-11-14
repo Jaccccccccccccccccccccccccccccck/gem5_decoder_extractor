@@ -60,6 +60,12 @@ namespace gem5
 namespace ArmISA
 {
 
+struct MemInfo {
+  bool isMem;
+  bool isRead;
+  MemInfo(bool _isMem, bool _isRead) :isMem(_isMem), isRead(_isRead) {}
+};
+
 class ISA;
 class Decoder : public InstDecoder
 {
@@ -131,6 +137,8 @@ class Decoder : public InstDecoder
         return si;
     }
 
+    static MemInfo* _decode_mem(ExtMachInst mach_inst);
+
   public: // Decoder API
     Decoder(const ArmDecoderParams &params);
 
@@ -173,6 +181,12 @@ class Decoder : public InstDecoder
     {
       return decodeInst(predecode(inst));
     }
+
+    static MemInfo* decode_mem(u_int32_t inst) {
+      return _decode_mem(predecode(inst));
+    }
+
+
 };
 
 } // namespace ArmISA
