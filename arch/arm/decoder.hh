@@ -62,8 +62,9 @@ namespace ArmISA
 
 struct MemInfo {
   bool isMem;
-  bool isRead;
-  MemInfo(bool _isMem, bool _isRead) :isMem(_isMem), isRead(_isRead) {}
+  bool isLoad;
+  bool isStore;
+  MemInfo(bool _isMem, bool _isLoad, bool _isStore) :isMem(_isMem), isLoad(_isLoad), isStore(_isStore) {}
 };
 
 class ISA;
