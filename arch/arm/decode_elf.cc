@@ -91,24 +91,62 @@ get_all_text_insts_fix32(const char *file_path, std::vector<u_int32_t>& res) {
     (void)close(fd);
 }
 
-void
-Decoder::decode_elf_arm(const char *file_path, std::vector<StaticInstPtr> &res)
+std::vector<StaticInstPtr>
+Decoder::decode_elf_arm(const char *file_path)
 {
     std::vector<u_int32_t> insts;
+    std::cout << "get inst from elf file: " << file_path << std::endl;
     get_all_text_insts_fix32(file_path, insts);
-    res.resize(insts.size());
+    std::vector<StaticInstPtr> res(insts.size());
     for(int i = 0; i < insts.size(); i++) {
         res[i] = gem5::ArmISA::Decoder::decode_inst(insts[i]);
-        // if (i < 10) {
-        //     std::cout << std::hex << res[i] << " : "<< res[i]->getName() << std::endl;
-        //     if(i > 0) {
-        //         std::cout << std::hex << "last" << " : "<< res[i-1]->getName() << std::endl;
-        //     }
-        // }
     }
-    // for (int i = 0; i < 10 && i < res.size(); i++) {
-    //     std::cout << std::hex << res[i] << " : "<< res[i]->getName() << std::endl;
-    // }
+    for (int i = 0; i < 1000 && i < insts.size(); i++) {
+        if(res[i]->isMemRef()) {
+            std::cout << i << " : " << std::hex << insts[i] << " " << res[i]->getName() <<  " is mem " << std::endl;
+        }
+    }
+    return res;
 }
+
+std::vector<MemInfo*>
+Decoder::decode_elf_arm_mem_info(const char *file_path)
+{
+    std::vector<u_int32_t> insts;
+    std::cout << "get inst from elf file: " << file_path << std::endl;
+    get_all_text_insts_fix32(file_path, insts);
+    std::vector<MemInfo*> res(insts.size());
+    for(int i = 0; i < insts.size(); i++) {
+        res[i] = gem5::ArmISA::Decoder::decode_mem(insts[i]);
+    }
+    for (int i = 0; i < 1000 && i < insts.size(); i++) {
+        if(res[i]->isMem) {
+            std::cout << i << " : " << std::hex << insts[i] << " " <<  " is mem " << std::endl;
+        }
+    }
+    return res;
+}
+
+void
+Decoder::compare_decode_mem_info(const char *file_path)
+{
+    std::vector<u_int32_t> insts;
+    std::cout << "get inst from elf file: " << file_path << std::endl;
+    get_all_text_insts_fix32(file_path, insts);
+    std::vector<MemInfo*> res_mem_info(insts.size());
+    std::vector<StaticInstPtr> res_inst(insts.size());
+    for(int i = 0; i < insts.size(); i++) {
+        res_mem_info[i] = gem5::ArmISA::Decoder::decode_mem(insts[i]);
+        res_inst[i] = gem5::ArmISA::Decoder::decode_inst(insts[i]);
+    }
+    for (int i = 0; i < 1000 && i < insts.size(); i++) {
+        if(res_mem_info[i]->isMem != res_inst[i]->isMemRef()) {
+            std::cout << i << " : " << std::hex << insts[i] << " inst " << res_inst[i]->getName() <<  ", mem info is_mem: " << res_mem_info[i]->isMem <<
+            ", inst info is_mem:" << res_inst[i]->isMemRef() << std::endl;
+            std::cout << res_inst[i]->isMacroop() << std::endl;
+        }
+    }
+}
+
 } // namespace ArmISA
 } // namespace gem5

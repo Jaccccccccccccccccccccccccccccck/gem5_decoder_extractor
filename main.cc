@@ -8,18 +8,13 @@
 using namespace std;
 
 void test_decode_elf_arm(const char* file_path) {
-    std::vector<gem5::StaticInstPtr> insts;
-    gem5::ArmISA::Decoder::decode_elf_arm(file_path, insts);
+    std::vector<gem5::StaticInstPtr> insts = gem5::ArmISA::Decoder::decode_elf_arm(file_path);
     cout << "elf .text insts count: " << insts.size() << endl;
-    cout << "first 10 insts opcode ..." << endl;
-    for (int i = 0; i < 10000 && i < insts.size(); i++) {
-        if(insts[i]->isMicroop()) {
-            cout << i << " : " << " " << insts[i]->getName() <<  " is Micro " << "!!!!!!!!!!!!!1" << endl;
-        }
-        if(insts[i]->isMacroop()) {
-            cout << i << " : " << " " << insts[i]->getName() << " is Macro: " << insts[i]->isMacroop() << endl;
-        }
-    }
+    // for (int i = 0; i < 1000 && i < insts.size(); i++) {
+    //     if(insts[i]->isMemRef()) {
+    //         cout << i << " : " << " " << insts[i]->getName() <<  " is mem " << endl;
+    //     }
+    // }
 }
 
 void get_inst_size() {
@@ -64,14 +59,22 @@ void test_copy_inst() {
     cout << "copied inst op class: " << copied_inst->getName() << endl;
 }
 
-void test_decode_mem() {
-    gem5::ArmISA::MemInfo* meminfo = gem5::ArmISA::Decoder::decode_mem(0xd50342df);
-    cout << "decode mem, is mem: " << meminfo->isMem << endl;
+void test_decode_mem(const char *file_path) {
+    std::vector<gem5::ArmISA::MemInfo*> insts = gem5::ArmISA::Decoder::decode_elf_arm_mem_info(file_path);
+    cout << "elf .text insts count: " << insts.size() << endl;
+    // for (int i = 0; i < 1000 && i < insts.size(); i++) {
+    //     if(insts[i]->isMem) {
+    //         cout << i << " : " << " " << insts[i]->isMem <<  " is mem " << endl;
+    //     }
+    // }
 }
 
 int main(int argc, char* argv[]) {
-    test_decode_mem();
-    test_decode_elf_arm("../test/hello.arm64");
+    // test_decode_mem("../test/hello.arm64");
+    // test_decode_elf_arm("../test/hello.arm64");
+    gem5::ArmISA::MemInfo* mem_info = gem5::ArmISA::Decoder::decode_mem(0xa9bf7bfd);
+    cout << mem_info->isMem << endl;
+    gem5::ArmISA::Decoder::compare_decode_mem_info("../test/hello.arm64");
     // get_inst_size();
     // test_copy_inst();
     if (argc != 2) {

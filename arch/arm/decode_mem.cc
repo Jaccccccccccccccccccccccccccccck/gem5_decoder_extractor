@@ -27,7 +27,7 @@ ArmISA::Decoder::_decode_mem(ExtMachInst machInst) {
                 }
             }
         }
-        return new MemInfo(-1, 0, 0);
+        return new MemInfo(0, 0, 0);
     } else if (bits(machInst, 25) == 0) {
         // bit 27,25=10
         switch (bits(machInst, 29, 28)) {
@@ -143,7 +143,7 @@ ArmISA::Decoder::_decode_mem(ExtMachInst machInst) {
                 } else if (bits(machInst, 31)) {
                     // return new Unknown64(machInst);
                     // go error
-                    return new MemInfo(-1, 0, 0);
+                    return new MemInfo(0, 0, 0);
                 } else {
                     bool load = bits(machInst, 22);
                     if (load) {
@@ -1398,7 +1398,7 @@ ArmISA::Decoder::_decode_mem(ExtMachInst machInst) {
         }
 
     } else {
-        return new MemInfo(-1, 0, 0);
+        return new MemInfo(0, 0, 0);
     }
 }
 

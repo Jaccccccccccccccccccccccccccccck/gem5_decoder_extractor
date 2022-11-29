@@ -145,7 +145,9 @@ class Decoder : public InstDecoder
 
     static StaticInstPtr decodeInst(ExtMachInst mach_inst);
 
-    static void decode_elf_arm(const char *file_path,  std::vector<StaticInstPtr> &res);
+    static std::vector<StaticInstPtr> decode_elf_arm(const char *file_path);
+
+    static std::vector<MemInfo*> decode_elf_arm_mem_info(const char *file_path);
 
     /** Reset the decoders internal state. */
     void reset() override;
@@ -187,6 +189,7 @@ class Decoder : public InstDecoder
       return _decode_mem(predecode(inst));
     }
 
+    static void compare_decode_mem_info(const char *file_path);
 
 };
 
