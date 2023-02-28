@@ -40,6 +40,26 @@ void get_inst_size() {
     printf("  ------\n");
     printf("  size of arm DataXImmOp inst: %d\n", sizeof(gem5::ArmISA::DataXImmOp));
     printf("  size of arm AddXImm inst: %d\n", sizeof(gem5::ArmISAInst::AddXImm));
+    printf("  ------\n");
+    printf("  size of arm Bl64 inst: %d\n", sizeof(gem5::ArmISAInst::Bl64));
+    printf("  size of arm STRW64_IMM inst: %d\n", sizeof(gem5::ArmISAInst::STRW64_IMM));
+    printf("  size of arm LDRHFP64_REG inst: %d\n", sizeof(gem5::ArmISAInst::LDRHFP64_REG));
+    printf("  size of arm Movz inst: %d\n", sizeof(gem5::ArmISAInst::Movz));
+    printf("  size of gem5 RegId inst: %d\n", sizeof(gem5::RegId));
+    printf("  size of arm MemoryAtomicPair64 inst: %d\n", sizeof(gem5::ArmISA::MemoryAtomicPair64));
+    printf("  size of arm CASP64 inst: %d\n", sizeof(gem5::ArmISAInst::CASP64));
+    printf("  size of arm CmnsRegPclr inst: %d\n", sizeof(gem5::ArmISAInst::CmnsRegPclr));
+    printf("  size of arm STSMAXH inst: %d\n", sizeof(gem5::ArmISAInst::STSMAXH));
+    printf("  size of arm LOAD_REG_PY_AY_WY_SN_UN_SZ1Acc inst: %d\n", sizeof(gem5::ArmISAInst::LOAD_REG_PY_AY_WY_SN_UN_SZ1Acc));
+    printf("  size of arm LOAD_IMM_PY_AN_WY_SY_UY_SZ1Acc inst: %d\n", sizeof(gem5::ArmISAInst::LOAD_IMM_PY_AN_WY_SY_UY_SZ1Acc));
+    printf("  size of arm LOAD_IMM_PN_AY_WY_SY_UN_SZ2Acc inst: %d\n", sizeof(gem5::ArmISAInst::LOAD_IMM_PN_AY_WY_SY_UN_SZ2Acc));
+    printf("  size of arm STORE_IMM_PN_AY_WY_SN_UN_SZ2 inst: %d\n", sizeof(gem5::ArmISAInst::STORE_IMM_PN_AY_WY_SN_UN_SZ2));
+    printf("  size of arm SasxReg inst: %d\n", sizeof(gem5::ArmISAInst::SasxReg));
+    printf("  size of arm BxjReg inst: %d\n", sizeof(gem5::ArmISAInst::BxjReg));
+    printf("  size of arm SbcImm inst: %d\n", sizeof(gem5::ArmISAInst::SbcImm));
+    printf("  size of arm NopInst inst: %d\n", sizeof(gem5::ArmISAInst::NopInst));
+    printf("  size of arm LDXRX64 inst: %d\n", sizeof(gem5::ArmISAInst::LDXRX64));
+    printf("  size of arm LDXRW64 inst: %d\n", sizeof(gem5::ArmISAInst::LDXRW64));
 }
 
 void test_copy_inst() {
@@ -72,17 +92,20 @@ void test_decode_mem(const char *file_path) {
 int main(int argc, char* argv[]) {
     // test_decode_mem("../test/hello.arm64");
     // test_decode_elf_arm("../test/hello.arm64");
-    gem5::ArmISA::MemInfo* mem_info = gem5::ArmISA::Decoder::decode_mem(0xa9bf7bfd);
-    cout << mem_info->isMem << endl;
-    gem5::ArmISA::Decoder::compare_decode_mem_info("../test/hello.arm64");
+    // test_decode_elf_arm("../test/hello.arm64");
+    //gem5::ArmISA::MemInfo* mem_info = gem5::ArmISA::Decoder::decode_mem(0xa9bf7bfd);
+    //cout << mem_info->isMem << endl;
+    //gem5::ArmISA::Decoder::compare_decode_mem_info("../test/hello.arm64");
     // get_inst_size();
     // test_copy_inst();
     if (argc != 2) {
         cout << "need a hex inst arg! eg. d50342df" << endl;
         exit(1);
     }
-    int64_t inst = strtoul(argv[1], nullptr, 16);
+    int32_t inst = strtoul(argv[1], nullptr, 16);
+    cout << "decoding " << argv[1] << endl; 
     gem5::StaticInstPtr a = gem5::ArmISA::Decoder::decode_inst(inst);
+    cout << "is Macro op: " << a->isMacroop() << endl;
     cout << "opcode of " << hex << argv[1] << ": " << a->getName() << endl;
 
 }
